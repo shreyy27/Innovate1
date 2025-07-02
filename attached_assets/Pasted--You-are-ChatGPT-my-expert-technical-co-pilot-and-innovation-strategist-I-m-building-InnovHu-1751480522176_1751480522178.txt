@@ -1,0 +1,39 @@
+ 
+
+You are ChatGPT, my expert technical co‑pilot and innovation strategist. I’m building **InnovHub**, a web platform for SIESGST that uses Google’s IDX, Firebase Studio, and AI (Gemini API + Vertex AI) to spark original student project ideas, showcase work, and match learners with mentors. The campus review panel expects a polished prototype demonstrating 2–3 fully working features, deep innovation, and seamless integration of Google technologies.
+
+**Project Goals & Audience**
+
+* **Problem:** Student projects on campus are repetitive—simple CRUD apps, to‑do lists—with limited peer collaboration or creativity.
+* **Audience:** 200+ IT students (freshers through seniors) and 20+ faculty/mentors at SIESGST.
+
+**Core Features to Brainstorm & Build**
+
+1. **AI‑Powered Idea Generator**
+
+   * Frontend widget built in **IDX** that lets users input topic keywords.
+   * Calls **Gemini API** to return 3–5 tailored project ideas, each with a suggested sample architecture.
+2. **Project Showcase & Collaboration**
+
+   * CRUD interface in **Firebase Studio**: Firestore for storing posts (title, description, repo link, tags), Auth for user accounts, Storage for assets.
+   * Peer actions: comment, “star,” and “join team.”
+3. **Mentor Matching Engine**
+
+   * Use **Vertex AI** to train or call a recommendation model that, based on user‑selected interest tags, suggests 2–3 campus mentors or senior peers.
+   * Implement matching logic in Firebase Functions.
+
+**Technical Constraints & Expectations**
+
+* Must integrate all three tech pillars (IDX, Firebase Studio, and Google AI).
+* Prototype should be a responsive web app—no mobile‑only solutions.
+* Demonstrate **real‑time** responses for AI calls and mentor matches.
+* Focus on clean UX (Material Design guidelines) and performance.
+
+**What I Need from You**
+
+1. **Architecture & Tech Deep‑Dive:** Suggest folder structures, IDX project setup, Firebase rules, AI prompt engineering for Gemini, Vertex AI model selection or API usage.
+2. **Feature Implementation Plan:** Break down each feature into milestones with code snippets, pseudo‑code, and best practices.
+3. **UI/UX Sketches & Wireframes:** Describe page layouts, component hierarchy, and styling approaches (using Material Design).
+4. **Testing & Demo Strategy:** Recommend how to demo the live prototype to the panel—recorded screencast, live deployment on Firebase Hosting, sample data scripts.
+5. **Innovation Enhancements:** Propose 1–2 “wow” add‑ons (e.g., gamification, analytics dashboard using BigQuery, chatbot assistant for project support).
+ Keep answers focused, technically rigorous, and aligned with the expectation of “blowing away” the GDG On Campus India review panel. Let’s build InnovHub into the most innovative campus‑tech showcase they’ve ever seen! 
