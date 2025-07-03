@@ -1,0 +1,67 @@
+You are tasked with building “InnovHub,” a web-based student innovation ecosystem designed to foster original project development, cross-functional collaboration, and effective use of Google Technologies within a college environment.
+
+The platform must be both practical for daily student use and showcase technical innovation aligned with Google’s stack.
+
+📌 Core Features Required
+✅ AI-Powered Project Idea Generator
+
+Input: Student provides keywords, interests, or domain (e.g., “sustainability,” “health-tech”).
+
+Output: Gemini API suggests 3–5 unique project ideas with brief descriptions and architecture hints.
+
+✅ Skill-to-Project Matchmaking
+
+Input: Student lists their technical/non-technical skills.
+
+Output: Gemini AI recommends suitable projects needing those skills.
+
+✅ Live Project Help Board
+
+Students post real-time requests like “Need frontend developer” or “Looking for IoT hardware support.”
+
+Others can view and offer to join projects needing their expertise.
+
+✅ AI Blueprint Generator
+
+Gemini API provides rough system architecture diagrams and recommended tech stack (Firebase, GCP, etc.) based on selected project ideas.
+
+✅ Project Showcase & Collaboration Space
+
+Each project has a public page with title, description, team members, repo link, tech tags, and project status.
+
+Peers can comment, star, and request to join teams.
+
+✅ Google Tech Badges System
+
+Projects integrating Google tools (e.g., Firebase, Gemini AI) earn visible platform badges, encouraging adoption.
+
+✅ Success Stories & Alumni Project Archive
+
+Library of impactful past projects with images, videos, tech stack details—includes projects like “Smart Solar Ecosystem.”
+
+✅ Low-Code Starter Templates for Beginners
+
+Preloaded, customizable Firebase Studio + IDX templates to help non-expert users quickly prototype apps or websites.
+
+✅ Mini Hackathon Integration
+
+Option to organize campus-only, 24–48 hour project sprints directly through the platform, boosting real project creation.
+
+🛠️ Tech Stack Guidelines
+Frontend: Google IDX for development
+
+Backend & Database: Firebase (Firestore, Auth, Functions, Storage)
+
+AI Services: Gemini API (for ideas, blueprints), Vertex AI (mentor recommendations, skill analysis)
+
+Additional Tools: Firebase Studio for project templates, Google Calendar API for event scheduling
+
+🎯 Target Outcome
+A prototype website with 2–3 fully functional features from above list.
+
+User flow should prioritize: easy onboarding, AI-assisted suggestions, seamless project collaboration.
+
+Platform must visibly promote innovation and Google tool integration, making it engaging and beneficial for all students, including beginners.
+
+InnovHub is not just a project listing site—it’s an intelligent ecosystem empowering students to create, collaborate, and innovate using the best of Google technologies.
+

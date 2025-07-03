@@ -1,9 +1,10 @@
 import { 
-  users, projects, projectMembers, projectStars, mentorships, activities, aiIdeas,
+  users, projects, projectMembers, projectStars, mentorships, activities, aiIdeas, helpRequests, helpOffers,
   type User, type InsertUser, type Project, type InsertProject, 
   type ProjectMember, type InsertProjectMember, type ProjectStar, type InsertProjectStar,
   type Mentorship, type InsertMentorship, type Activity, type InsertActivity,
-  type AiIdea, type InsertAiIdea, type ProjectWithAuthor, type UserWithStats, type ActivityWithUser
+  type AiIdea, type InsertAiIdea, type HelpRequest, type InsertHelpRequest,
+  type HelpOffer, type InsertHelpOffer, type ProjectWithAuthor, type UserWithStats, type ActivityWithUser
 } from "@shared/schema";
 
 export interface IStorage {
@@ -38,6 +39,11 @@ export interface IStorage {
   // AI operations
   createAiIdea(idea: InsertAiIdea): Promise<AiIdea>;
   getAiIdeas(userId: number): Promise<AiIdea[]>;
+
+  // Help request operations
+  getHelpRequests(): Promise<HelpRequest[]>;
+  createHelpRequest(helpRequest: InsertHelpRequest): Promise<HelpRequest>;
+  createHelpOffer(helpOffer: InsertHelpOffer): Promise<HelpOffer>;
 }
 
 export class MemStorage implements IStorage {
@@ -48,6 +54,8 @@ export class MemStorage implements IStorage {
   private mentorships: Map<number, Mentorship>;
   private activities: Map<number, Activity>;
   private aiIdeas: Map<number, AiIdea>;
+  private helpRequests: Map<number, HelpRequest>;
+  private helpOffers: Map<number, HelpOffer>;
   private currentId: number;
 
   constructor() {
@@ -58,6 +66,8 @@ export class MemStorage implements IStorage {
     this.mentorships = new Map();
     this.activities = new Map();
     this.aiIdeas = new Map();
+    this.helpRequests = new Map();
+    this.helpOffers = new Map();
     this.currentId = 1;
 
     // Initialize with sample data
@@ -149,7 +159,52 @@ export class MemStorage implements IStorage {
     ];
 
     sampleProjects.forEach(project => this.projects.set(project.id, project));
-    this.currentId = Math.max(...sampleUsers.map(u => u.id), ...sampleProjects.map(p => p.id)) + 1;
+
+    // Sample help requests
+    const sampleHelpRequests: HelpRequest[] = [
+      {
+        id: 1,
+        title: "Need React Developer for E-commerce Dashboard",
+        description: "Building a real-time analytics dashboard for our campus store. Need someone experienced with React, Chart.js, and state management to help with the frontend components.",
+        projectName: "Campus Store Analytics",
+        skillsNeeded: ["React", "JavaScript", "Chart.js", "CSS"],
+        urgency: "high",
+        requestType: "frontend",
+        authorId: 3,
+        responses: 2,
+        status: "open",
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      },
+      {
+        id: 2,
+        title: "Looking for IoT Hardware Support",
+        description: "Working on smart classroom project with sensor networks. Need help with Arduino programming and sensor integration for our sustainability tracking system.",
+        projectName: "Smart Campus IoT",
+        skillsNeeded: ["Arduino", "IoT", "Python", "Sensors"],
+        urgency: "medium",
+        requestType: "other",
+        authorId: 1,
+        responses: 1,
+        status: "open",
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+      },
+      {
+        id: 3,
+        title: "UI/UX Designer Needed for Mobile App",
+        description: "Our study buddy app needs a design overhaul. Looking for someone to help with user experience design, wireframes, and creating a modern, student-friendly interface.",
+        projectName: "StudyConnect Mobile",
+        skillsNeeded: ["UI/UX", "Figma", "Mobile Design", "User Research"],
+        urgency: "low",
+        requestType: "design",
+        authorId: 1,
+        responses: 0,
+        status: "open",
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+      }
+    ];
+
+    sampleHelpRequests.forEach(request => this.helpRequests.set(request.id, request));
+    this.currentId = Math.max(...sampleUsers.map(u => u.id), ...sampleProjects.map(p => p.id), ...sampleHelpRequests.map(r => r.id)) + 1;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -399,6 +454,44 @@ export class MemStorage implements IStorage {
 
   async getAiIdeas(userId: number): Promise<AiIdea[]> {
     return Array.from(this.aiIdeas.values()).filter(idea => idea.userId === userId);
+  }
+
+  async getHelpRequests(): Promise<HelpRequest[]> {
+    return Array.from(this.helpRequests.values())
+      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  }
+
+  async createHelpRequest(insertHelpRequest: InsertHelpRequest): Promise<HelpRequest> {
+    const id = this.currentId++;
+    const helpRequest: HelpRequest = { 
+      ...insertHelpRequest, 
+      id, 
+      responses: 0,
+      status: "open",
+      createdAt: new Date(),
+    };
+    this.helpRequests.set(id, helpRequest);
+    return helpRequest;
+  }
+
+  async createHelpOffer(insertHelpOffer: InsertHelpOffer): Promise<HelpOffer> {
+    const id = this.currentId++;
+    const helpOffer: HelpOffer = { 
+      ...insertHelpOffer, 
+      id, 
+      status: "pending",
+      createdAt: new Date(),
+    };
+    this.helpOffers.set(id, helpOffer);
+
+    // Update help request response count
+    const helpRequest = this.helpRequests.get(insertHelpOffer.helpRequestId);
+    if (helpRequest) {
+      helpRequest.responses = (helpRequest.responses || 0) + 1;
+      this.helpRequests.set(insertHelpOffer.helpRequestId, helpRequest);
+    }
+
+    return helpOffer;
   }
 }
 

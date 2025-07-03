@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { GoogleTechBadges } from "@/components/google-tech-badges";
 import { Eye, UserPlus, Star, Plus, ExternalLink } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -142,12 +143,18 @@ export function ProjectShowcase() {
                   {project.description}
                 </p>
                 
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {project.technologies?.slice(0, 3).map((tech) => (
-                    <Badge key={tech} variant="secondary" className="text-xs">
-                      {tech}
-                    </Badge>
-                  ))}
+                <div className="space-y-2 mb-3">
+                  <div className="flex flex-wrap gap-1">
+                    {project.technologies?.slice(0, 3).map((tech) => (
+                      <Badge key={tech} variant="secondary" className="text-xs">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                  <GoogleTechBadges 
+                    projectTechnologies={project.technologies || []} 
+                    className="justify-start"
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">

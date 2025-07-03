@@ -243,6 +243,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Skill-to-project matching
+  app.post("/api/projects/match-skills", async (req, res) => {
+    try {
+      const { skills, userId } = req.body;
+      if (!skills || !Array.isArray(skills)) {
+        return res.status(400).json({ error: "Skills array is required" });
+      }
+
+      // Get all projects and score them based on skill match
+      const allProjects = await storage.getProjectsWithAuthors();
+      const scoredProjects = allProjects
+        .map(project => {
+          const projectTechs = project.technologies || [];
+          const matchingTechs = projectTechs.filter(tech => 
+            skills.some(skill => 
+              tech.toLowerCase().includes(skill.toLowerCase()) || 
+              skill.toLowerCase().includes(tech.toLowerCase())
+            )
+          );
+          
+          const matchScore = Math.round((matchingTechs.length / Math.max(projectTechs.length, 1)) * 100);
+          
+          return {
+            ...project,
+            matchScore,
+            matchReason: `Your skills in ${matchingTechs.slice(0, 2).join(' and ')} are needed for this ${project.difficulty} level project. The team is looking for someone with your expertise.`
+          };
+        })
+        .filter(project => project.matchScore > 20)
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, 5);
+
+      res.json({ projects: scoredProjects });
+    } catch (error) {
+      console.error("Skill matching error:", error);
+      res.status(500).json({ error: "Failed to match skills to projects" });
+    }
+  });
+
+  // Help requests
+  app.get("/api/help-requests", async (req, res) => {
+    try {
+      const helpRequests = await storage.getHelpRequests();
+      res.json(helpRequests);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get help requests" });
+    }
+  });
+
+  app.post("/api/help-requests", async (req, res) => {
+    try {
+      const helpRequestData = req.body;
+      const helpRequest = await storage.createHelpRequest(helpRequestData);
+      
+      // Create activity
+      await storage.createActivity({
+        userId: helpRequestData.authorId,
+        action: "posted_help_request",
+        targetType: "help_request",
+        targetId: helpRequest.id,
+        metadata: { title: helpRequest.title, projectName: helpRequest.projectName },
+      });
+
+      res.json({ success: true, helpRequest });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : "Failed to create help request" });
+    }
+  });
+
+  app.post("/api/help-requests/:id/offer-help", async (req, res) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      const { userId, message } = req.body;
+      
+      const helpOffer = await storage.createHelpOffer({
+        helpRequestId: requestId,
+        userId,
+        message,
+      });
+
+      res.json({ success: true, helpOffer });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : "Failed to offer help" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

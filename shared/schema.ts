@@ -77,6 +77,29 @@ export const aiIdeas = pgTable("ai_ideas", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const helpRequests = pgTable("help_requests", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  projectName: text("project_name").notNull(),
+  skillsNeeded: text("skills_needed").array().default([]),
+  urgency: text("urgency").notNull().default("medium"), // low, medium, high
+  requestType: text("request_type").notNull().default("other"), // frontend, backend, mobile, design, data, other
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  responses: integer("responses").default(0),
+  status: text("status").notNull().default("open"), // open, in_progress, closed
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const helpOffers = pgTable("help_offers", {
+  id: serial("id").primaryKey(),
+  helpRequestId: integer("help_request_id").references(() => helpRequests.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  message: text("message").notNull(),
+  status: text("status").notNull().default("pending"), // pending, accepted, declined
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -115,6 +138,17 @@ export const insertAiIdeaSchema = createInsertSchema(aiIdeas).omit({
   createdAt: true,
 });
 
+export const insertHelpRequestSchema = createInsertSchema(helpRequests).omit({
+  id: true,
+  createdAt: true,
+  responses: true,
+});
+
+export const insertHelpOfferSchema = createInsertSchema(helpOffers).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -130,6 +164,10 @@ export type Activity = typeof activities.$inferSelect;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type AiIdea = typeof aiIdeas.$inferSelect;
 export type InsertAiIdea = z.infer<typeof insertAiIdeaSchema>;
+export type HelpRequest = typeof helpRequests.$inferSelect;
+export type InsertHelpRequest = z.infer<typeof insertHelpRequestSchema>;
+export type HelpOffer = typeof helpOffers.$inferSelect;
+export type InsertHelpOffer = z.infer<typeof insertHelpOfferSchema>;
 
 // Extended types for API responses
 export type ProjectWithAuthor = Project & {
